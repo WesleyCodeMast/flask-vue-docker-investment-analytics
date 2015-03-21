@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  app:
+    image: "${PROJECT_NAME}_app:${IMAGE_TAG}"
+    build:
+      context: ./
+      dockerfile: docker/app/Dockerfile
+      target: release
+      args:
+        BUILD_VERSION: ${BUILD_VERSION}
+        BUILD_HASH: ${BUILD_HASH}
+
+  celery:
+    image: "${PROJECT_NAME}_celery:${IMAGE_TAG}"
+    build:
+      context: ./
+      dockerfile: docker/celery/Dockerfile
+      target: release
+      args:
+        BUILD_VERSION: ${BUILD_VERSION}
+        BUILD_HASH: ${BUILD_HASH}
+
+  flower:
+    image: "${PROJECT_NAME}_flower:${IMAGE_TAG}"
+    build:
+      context: ./
+      dockerfile: docker/flower/Dockerfile
+      target: release
+      args:
+        BUILD_VERSION: ${BUILD_VERSION}
+        BUILD_HASH: ${BUILD_HASH}

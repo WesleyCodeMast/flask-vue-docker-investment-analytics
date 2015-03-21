@@ -1,0 +1,27 @@
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+
+<div class="card" style="max-width: 300px;">
+  <img class="card-img-top" %(image)s>
+  <div class="card-body">
+    <div class="custom-file">
+      <input class="custom-file-input" %(file)s>
+      <label class="custom-file-label">Choose file</label>
+    </div>
+    <hr />
+    <label class="form-check-label d-flex justify-content-center">
+      <div class="input-group mb-3 border rounded-right border-left-0 border-top-0 justify-content-between">
+        <div class="input-group-append">                                              
+          <input class="form-control" type="checkbox" name="%(marker)s"></input>
+        </div>
+        <div class="input-group-append">
+          <span class="input-group-text border-0">Delete</span>
+        </div>                                                                    
+      </div>
+    </label>
+    <input %(text)s>
+  </div>
+</div>
+
+<script>
+$(".custom-file-input").on("change", function() {var fileName = $(this).val().split("\\").pop();$(this).siblings(".custom-file-label").addClass("selected").html(fileName);});
+</script>

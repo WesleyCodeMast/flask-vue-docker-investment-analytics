@@ -1,0 +1,10 @@
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+
+<div class="custom-file mb-3">
+  <input class="custom-file-input" %(file)s>
+  <label class="custom-file-label" for="customFile">Choose file</label>
+</div>
+
+<script>
+  $(".custom-file-input").on("change", function() {var fileName = $(this).val().split("\\").pop();$(this).siblings(".custom-file-label").addClass("selected").html(fileName);});
+</script>

@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15.4
+    networks:
+      default:
+        aliases:
+          - postgresql.db.service
+    env_file:
+      - .env
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+
+  redis:
+    image: redis:7.2
+    networks:
+      default:
+        aliases:
+          - redis.cache.service
+    volumes:
+      - redis_cache:/data
+    
+  app:
+    build:
+      context: ./
+      dockerfile: docker/app/Dockerfile
+    networks:
+      default:
+        aliases:
+          - app.backend.service
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - python_volume:/src
+
+  celery:
+    build:
+      context: ./
+      dockerfile: docker/celery/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - app
+
+  flower:
+    build:
+      context: ./
+      dockerfile: docker/flower/Dockerfile
+    networks:
+      default:
+        aliases:
+          - flower.monitoring.service
+    env_file:
+      - .env
+    depends_on:
+      - app
+
+  admin:
+    build:
+      context: ./
+      dockerfile: docker/admin/Dockerfile
+    networks:
+      default:
+        aliases:
+          - app.admin.service
+    env_file:
+      - .env
+    depends_on:
+      - app
+
+volumes:
+  postgres_volume:
+  python_volume:
+  redis_cache:
+    driver: local

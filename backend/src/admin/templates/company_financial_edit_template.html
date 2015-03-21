@@ -1,0 +1,72 @@
+{% extends 'admin/model/edit.html' %}
+
+
+{% macro buttons_extra(cancel_url) %}
+  {% if admin_view.can_create %}
+  <input name="_add_another" type="submit" class="btn btn-secondary" value="{{ _gettext('Save and Add Another') }}" />
+  {% endif %}
+  {% if admin_view.can_edit %}
+  <input name="_continue_editing" type="submit" class="btn btn-secondary" value="{{ _gettext('Save and Continue Editing') }}" />
+  {% endif %}
+{% endmacro %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block body %}
+  {% block navlinks %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+    </li>
+    {%- if admin_view.can_create -%}
+    <li class="nav-item">
+        <a href="{{ get_url('.create_view', url=return_url) }}" class="nav-link">{{ _gettext('Create') }}</a>
+    </li>
+    {%- endif -%}
+    <li class="nav-item">
+        <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Edit') }}</a>
+    </li>
+    {%- if admin_view.can_view_details -%}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ get_url('.details_view', id=request.args.get('id'), url=return_url) }}">{{ _gettext('Details') }}</a>
+    </li>
+    {%- endif -%}
+  </ul>
+  <p></p>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{return_url}}edit/?id={{company.id}}&url=/admin/company/" class="nav-link">{{ company.symbol }}</a>
+    </li>
+    <li class="nav nav-item"><a href="{{ return_url }}{{company.id}}/ceo" class="nav-link">CEO</a></li>
+    <li class="nav nav-item"><a href="{{ return_url }}{{company.id}}/financial" class="nav-link active">Financial</a></li>
+  </ul>
+  <p></p>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ return_url }}{{company.id}}/financial" class="nav-link active">{{ _gettext('List') }}</a>
+    </li>
+    {%- if admin_view.can_create -%}
+    <li class="nav-item">
+        <a href="{{return_url}}{{company.id}}/financial/create" class="nav-link">{{ _gettext('Create') }}</a>
+    </li>
+    {%- endif -%}
+    {%- if admin_view.can_view_details -%}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ get_url('.details_view', id=company.id, url=return_url) }}">{{ _gettext('Details') }}</a>
+    </li>
+    {%- endif -%}
+  </ul>
+  {% endblock %}
+
+  {% block edit_form %}
+    {{ lib.render_form(form, return_url, buttons_extra(return_url), form_opts) }}
+  {% endblock %}
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  {{ lib.form_js() }}
+{% endblock %}

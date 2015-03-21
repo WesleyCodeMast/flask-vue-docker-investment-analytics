@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  postgres:
+    restart: always
+    ports:
+      - 5434:5432
+
+  redis:
+    restart: always
+    ports:
+      - 6377:6379
+
+  app:
+    ports:
+      - 8001:8000
+
+  flower:
+    ports:
+      - 8889:5555
+
+  admin:
+    ports:
+      - 8002:8000

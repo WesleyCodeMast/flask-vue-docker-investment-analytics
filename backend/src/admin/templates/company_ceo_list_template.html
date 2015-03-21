@@ -1,0 +1,111 @@
+{% extends 'company_edit_template.html' %}
+
+{% block head %}
+  {{ super() }}
+  {{ lib.form_css() }}
+{% endblock %}
+
+{% block body %}
+  {% block navlinks %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+    </li>
+    {%- if admin_view.can_create -%}
+    <li class="nav-item">
+        <a href="{{ get_url('.create_view', url=return_url) }}" class="nav-link">{{ _gettext('Create') }}</a>
+    </li>
+    {%- endif -%}
+    <li class="nav-item">
+        <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Edit') }}</a>
+    </li>
+    {%- if admin_view.can_view_details -%}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ get_url('.details_view', id=company.id, url=return_url) }}">{{ _gettext('Details') }}</a>
+    </li>
+    {%- endif -%}
+  </ul>
+  <p></p>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{return_url}}edit/?id={{company.id}}&url=/admin/company/" class="nav-link">{{ company.symbol }}</a>
+    </li>
+    <li class="nav nav-item"><a href="{{ return_url }}{{company.id}}/ceo" class="nav-link active">CEO</a></li>
+    <li class="nav nav-item"><a href="{{ return_url }}{{company.id}}/financial" class="nav-link">Financial</a></li>
+  </ul>
+  <p></p>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a href="{{ return_url }}{{company.id}}/ceo" class="nav-link active">{{ _gettext('List') }}{% if ceo|length > 0 %} ({{ ceo|length }}){% endif %}</a>
+    </li>
+    {%- if admin_view.can_create -%}
+    <li class="nav-item">
+        <a href="{{return_url}}{{company.id}}/ceo/create" class="nav-link">{{ _gettext('Create') }}</a>
+    </li>
+    {%- endif -%}
+    {%- if admin_view.can_view_details -%}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ get_url('.details_view', id=company.id, url=return_url) }}">{{ _gettext('Details') }}</a>
+    </li>
+    {%- endif -%}
+  </ul>
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover model-list">
+        <thead>
+            <tr>
+                {% if ceo|length > 0 %}
+                <th class="">&nbsp;</th>
+                {% endif %}
+                {% for col in ceo_keys %}
+                {% if col in include_ceo_keys %}
+                <th class="column-header col-{{col}}">
+                    {{col | replace("_", " ") | title}}
+                </th>
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for row in ceo %}
+        <tr>
+
+            <td class="list-buttons-column">
+                <a class="icon" href="/admin/company/{{company.id}}/ceo/{{row.id}}/edit" title="Edit Record">
+                    <span class="fa fa-pencil glyphicon glyphicon-pencil"></span>
+                </a>
+                <form class="icon" method="POST" action="/admin/company/{{company.id}}/ceo/{{row.id}}/delete">
+                    <input id="id" name="id" required="" type="hidden" value="7">
+                    <input id="url" name="url" type="hidden" value="/admin/company/{{company.id}}/ceo/">
+                    
+                    <button onclick="return faHelpers.safeConfirm('Are you sure you want to delete this record?');" title="Delete record">
+                        <span class="fa fa-trash glyphicon glyphicon-trash"></span>
+                    </button>
+                </form>
+            </td>
+
+            {% for column in row.__annotations__.keys() %}
+            {% if column in include_ceo_keys%}
+            <td class="col-{{column}}">
+                {% if row.__getattribute__(column) == None %}
+                &nbsp;
+                {% else %}
+                {{ row.__getattribute__(column) }}
+                {% endif %}
+            </td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="999">
+                {% block empty_list_message %}
+                <div class="text-center">
+                    {{ admin_view.get_empty_list_message() }}
+                </div>
+                {% endblock %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+  {% endblock %}
+{% endblock %}

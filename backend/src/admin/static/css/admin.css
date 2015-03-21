@@ -1,0 +1,54 @@
+:root {
+    --theme-color-blue: #3348FB;
+    --theme-color-blue-2: #4A61F8;
+    --theme-color-blue-3: #5E72F8;
+}
+
+a {
+    color: var(--theme-color-blue);
+    transition: color .2s ease-in-out;
+}
+
+a:hover {
+    color: var(--theme-color-blue-2);
+}
+
+.form-control:focus {
+    border-color: var(--theme-color-blue);
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(74, 97, 248, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(74, 97, 248, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--theme-color-blue);
+    border-color: var(--theme-color-blue);
+    transition: .2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--theme-color-blue-3);
+    border-color: var(--theme-color-blue-3);
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: var(--theme-color-blue-2) !important;
+    border-color: var(--theme-color-blue-2) !important;
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(74, 97, 248, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 97, 248, 0.25) !important;
+}
+
+.bg-dark {
+    background-color: var(--theme-color-blue) !important;
+}
+
+.admin-logo {
+    display: block;
+    line-height: 0;
+    transition: opacity .2s ease-in-out;
+    margin-right: 40px;
+}
+
+.admin-logo:hover {
+    opacity: .8;
+}

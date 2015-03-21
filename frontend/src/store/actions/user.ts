@@ -1,0 +1,3 @@
+export const SIGNIN_REQUEST = 'SIGNIN_REQUEST';
+export const SIGNUP_REQUEST = 'SIGNUP_REQUEST';
+export const AUTH_SUCCESS = 'AUTH_SUCCESS';
