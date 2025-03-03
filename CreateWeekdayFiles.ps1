@@ -4,8 +4,8 @@ $endDate = Get-Date "2015-12-30"
 
 git add .
 
-$env:GIT_COMMITTER_DATE = "2015-03-21 13:00:00"
-$env:GIT_AUTHOR_DATE = "2015-03-21 13:00:00"  # Optional: Set author date too
+$env:GIT_COMMITTER_DATE = "2015-03-21 14:00:00"
+$env:GIT_AUTHOR_DATE = "2015-03-21 14:00:00"  # Optional: Set author date too
 
 
 git commit -m "updated company financials..."
