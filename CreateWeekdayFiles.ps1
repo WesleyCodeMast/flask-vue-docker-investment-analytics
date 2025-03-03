@@ -4,11 +4,11 @@ $endDate = Get-Date "2012-12-30"
 
 git add .
 
-$env:GIT_COMMITTER_DATE = "2012-03-21 12:00:00"
-$env:GIT_AUTHOR_DATE = "2012-03-21 12:00:00"  # Optional: Set author date too
+$env:GIT_COMMITTER_DATE = "2015-03-21 12:00:00"
+$env:GIT_AUTHOR_DATE = "2015-03-21 12:00:00"  # Optional: Set author date too
 
 
-git commit -m "init project..."
+git commit -m "finish MVP version"
 
 git push origin main # Change 'main' to your branch name if different
 
