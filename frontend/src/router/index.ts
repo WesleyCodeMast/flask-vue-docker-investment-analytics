@@ -10,6 +10,7 @@ import {
 import store from '@/store';
 
 import CompanyView from '../views/company';
+import TopFundLanding from '../views/landing';
 
 const isAuthenticated = (
   to: RouteLocationNormalized,
@@ -38,9 +39,26 @@ const isAnonymous = (
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    name: 'topFundLanding',
+    component: TopFundLanding,
+  },
+  // {
+  //   path: '/',
+  //   name: 'topFundLanding',
+  //   component: TopFundLanding,
+  //   // beforeEnter: (to, from, next) => next('/landing'),
+  // },
+  {
+    path: '/company',
     name: 'home',
     component: CompanyView,
     beforeEnter: (to, from, next) => next('/company/NKE'),
+  },
+  {
+    path: '/company/:symbol/notes',
+    name: 'companyNotes',
+    component: () => import(/* webpackChunkName: "companyNotes" */ '../views/company/CompanyNoteView.vue'),
+    beforeEnter: isAuthenticated,
   },
   {
     path: '/company/:symbol',
@@ -49,10 +67,16 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: isAuthenticated,
   },
   {
+    path: '/financials/:symbol/:rowKey',
+    name: 'companyFinancial',
+    component: () => import(/* webpackChunkName: "companyFinancial" */ '../views/company/CompanyRowChartView.vue'),
+    beforeEnter: isAuthenticated,
+  },
+  {
     path: '/list/:id',
     name: 'list',
     component: () => import(/* webpackChunkName: "list" */ '../views/list'),
-    beforeEnter: isAuthenticated,
+    // beforeEnter: isAuthenticated,
   },
   {
     path: '/login',

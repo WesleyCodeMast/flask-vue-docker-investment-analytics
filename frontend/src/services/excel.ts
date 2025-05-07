@@ -11,11 +11,12 @@ import {
   percentage,
 } from '@/services/renderers';
 
-export const getColumnName = (name: string, column: string | number): string => `${name}${column.toString().replace(' ', '').replace('(', '').replace(')', '')}`;
+export const getColumnName = (name: string, column: string | number): string => `${name}${column.toString()
+  .replace(' ', '').replace('(', '').replace(')', '')
+  .replace(`${"'"}`, '')}`;
 
-export const convertFormulas = (input: any, context: any, data: TableData, row: TableRow) => {
+export const convertFormulas = (input: any, context: any, data: TableData, column: string) => {
   const expressions = preprocess(input, data, context);
-
   if (!(expressions instanceof Set) || expressions.size === 0) {
     return expressions;
   }
@@ -25,18 +26,17 @@ export const convertFormulas = (input: any, context: any, data: TableData, row: 
   expressions.forEach((expression) => {
     output = output.replace(
       expression.input,
-      getColumnName(expression.variable, expression.column[data.column]),
+      getColumnName(expression.variable, expression.column[column]),
     );
   });
-
-  output = output.replace(',', ';').replace('**', '^');
+  // output = output.replace(',', ';').replace('**', '^');
+  output = output.replace(/\*\*/g, '^');
 
   return output;
 };
 
 export const exportExcel = async (company: CompanyController, data: TableData) => { // eslint-disable-line
   const workbook = new ExcelJS.Workbook();
-
   workbook.creator = 'TopFunds (https://topfunds.com/)';
   workbook.lastModifiedBy = 'TopFunds (https://topfunds.com/)';
   workbook.created = new Date();
@@ -49,17 +49,17 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
       { showGridLines: false },
     ],
   });
-
+  // format cell
   sheet.columns = [
     {
-      width: 3.5,
+      width: 5.5,
     },
     {
       key: 'id',
       width: 2.5,
     },
   ];
-
+  // Company Name
   sheet.mergeCells('A1:E1');
 
   const name = sheet.getCell('A1');
@@ -69,9 +69,9 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
     size: 12,
     bold: true,
   };
-
+  // description of the financial information (italic size=9)
   const description = sheet.getCell('C3');
-  description.value = 'Financials (all figures in US$ Millions except per share data)';
+  description.value = `Financials (all figures in ${`${company.data.reportedCurrency || 'USD$'} `} Millions except per share data)`;
   description.font = {
     name: 'Arial',
     size: 9,
@@ -79,8 +79,10 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
     color: { argb: '000000FF' },
   };
 
+  // border between categories
   let length = 5;
   data.categories.forEach((category) => {
+    if (data.column === 'year' && category.hidden) return;
     sheet.mergeCells(4, length + 1, 4, length + category.values.length);
 
     const cell = sheet.getCell(4, length + 1);
@@ -123,10 +125,16 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
 
   length = 6;
   data.categories.forEach((category) => {
+    if (data.column === 'year' && category.hidden) return;
+    let { column } = data;
+
+    if (category.name !== 'Quarterly') {
+      column = 'year';
+    }
     category.values.forEach((value) => {
       const cell = sheet.getCell(5, length);
 
-      cell.value = value[data.column];
+      cell.value = value[column];
       cell.font = {
         name: 'Arial',
         size: 10,
@@ -139,8 +147,22 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
 
   length = 7;
   data.rows.forEach((row, index) => {
-    const counter = sheet.getCell(length, 2);
+    /*
+      hide rows of
+      {
+        enterpriseValue,
+        netDebtEstimate,
+        requiredReturn,
+        terminalValue,
+        preferredStock,
+        minorityInterest,
+        freeCashFlowGrowthRate
+      } for MarketCap
+    */
+    if (row.hidden) sheet.getRow(length).hidden = true;
 
+    // calculate the formula
+    const counter = sheet.getCell(length, 2);
     counter.value = index + 1;
     counter.font = {
       name: 'Arial',
@@ -157,14 +179,24 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
 
     let innerLength = 6;
     data.categories.forEach((category) => {
-      category.values.forEach((value) => {
-        const cell = sheet.getCell(length, innerLength);
+      if (data.column === 'year' && category.hidden) return;
 
-        const formula = convertFormulas(value[row.key], value, data, row);
+      category.values.forEach((value) => {
+        let { column } = data;
+
+        if (category.name !== 'Quarterly') {
+          column = 'year';
+        }
+        const cell = sheet.getCell(length, innerLength);
+        if (category.name === 'Actual' && data.column === 'quarterlyPeriod') {
+          sheet.getColumn(innerLength).width = 0;
+        }
+        const formula = convertFormulas(value[row.key], value, data, column);
         const isFormula = typeof formula === 'string' && formula.startsWith('=');
 
         cell.value = isFormula ? { formula } : (formula || 0);
-        cell.name = getColumnName(row.key, value[data.column]);
+        cell.name = getColumnName(row.key, value[column]);
+
         cell.font = {
           name: 'Arial',
           size: 8,
@@ -172,8 +204,10 @@ export const exportExcel = async (company: CompanyController, data: TableData) =
 
         if (row.handler === percentage) {
           cell.numFmt = '0.0 "%";"("0.0") %";"-"';
-        } else if (row.handler === dollars) {
+        } else if (row.handler === dollars && company.data.currency === 'USD') {
           cell.numFmt = '"$" #,##0,,;"$ ("#,##0,,")";"-"';
+        } else if (row.handler === dollars && company.data.currency !== 'USD') {
+          cell.numFmt = '#,##0,,;"("#,##0,,")";"-"';
         } else if (row.handler === money) {
           cell.numFmt = '#,##0,,;"("#,##0,,")";"-"';
         } else if (row.handler === ratio) {

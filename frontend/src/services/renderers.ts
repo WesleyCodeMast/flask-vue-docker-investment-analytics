@@ -26,10 +26,16 @@ export const percentageAverage = (value: number) => {
 };
 
 export const money = (value: number) => {
-  const rounded = Math.floor(value / 1_000_000);
+  const rounded = Math.round(value / 1_000_000);
   return negative(rounded);
 };
 
-export const dollars = (value: number) => `$ ${money(value)}`;
+export const dollars = (value: number) => {
+  const currency = localStorage.getItem('currency');
+  if (!currency || currency === 'USD') {
+    return `$ ${money(value)}`;
+  }
+  return `${money(value)}`;
+};
 
 export const rounded = (value: number) => negative(Math.round(value));

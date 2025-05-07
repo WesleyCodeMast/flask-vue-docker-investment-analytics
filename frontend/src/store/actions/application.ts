@@ -1,4 +1,5 @@
 export const LOADING = 'LOADING';
+export const CURRENCY = 'CURRENCY';
 
 export const COMMENT_CURSOR = 'COMMENT_CURSOR';
 export const SHOW_COMMENT = 'SHOW_COMMENT';
@@ -6,3 +7,27 @@ export const HIDE_COMMENT = 'HIDE_COMMENT';
 
 export const SHOW_MODAL = 'SHOW_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
+
+export const CHART_PERIOD = 'CHART_PERIOD';
+export const CHART_PARAMS = 'CHART_PARAMS';
+export const COMPARE_COMPANIES = 'COMPARE_COMPANIES';
+
+export const PERIOD_TYPE = 'PERIOD_TYPE';
+export const VIEW_TYPE = 'VIEW_TYPE';
+
+export const SELECTED_ROWS = 'SELECTED_ROWS';
+export const HIDEFORECASTEDITINGMODAL = 'HIDEFORECASTEDITINGMODAL';
+
+export const LIST_VIEW_TYPE = 'LIST_VIEW_TYPE';
+export const LIST_SHOW_SYMBOL = 'LIST_SHOW_SYMBOL';
+
+export const LIST_ADDED_FIELDS = 'LIST_ADDED_FIELDS';
+export const LIST_REMOVED_FIELDS = 'LIST_REMOVED_FIELDS';
+export const LIST_HIGHLIGHT = 'LIST_HIGHLIGHT';
+
+export const NOTE_SORT_TYPE = 'NOTE_SORT_TYPE';
+export const NOTE_FONT_TYPE = 'NOTE_FONT_TYPE';
+export const NOTE_ADDITIONAL = 'NOTE_ADDITIONAL';
+
+export const COMPARE_COMPANY_LIST = 'COMPARE_COMPANY_LIST';
+export const IS_MOBILE = 'IS_MOBILE';
